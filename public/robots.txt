@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://448fa2e9-e766-4ec7-a928-e6759e7082eb.lovableproject.com/sitemap.xml
