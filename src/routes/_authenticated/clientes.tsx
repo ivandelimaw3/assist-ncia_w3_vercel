@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
@@ -25,9 +25,13 @@ import { toast } from "sonner";
 import { supabase, type Cliente } from "@/integrations/supabase/client";
 import { useAuthContext } from "@/components/AuthProvider";
 import { maskCPFCNPJ, maskCEP, maskTelefone } from "@/lib/masks";
+import { z } from "zod";
 
 export const Route = createFileRoute("/_authenticated/clientes")({
   component: ClientesPage,
+  validateSearch: z.object({
+    search: z.string().optional(),
+  }),
 });
 
 const empty = {
@@ -44,7 +48,8 @@ const empty = {
 function ClientesPage() {
   const { user } = useAuthContext();
   const qc = useQueryClient();
-  const [search, setSearch] = useState("");
+  const { search: initialSearch } = Route.useSearch();
+  const [search, setSearch] = useState(initialSearch ?? "");
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Cliente | null>(null);
   const [form, setForm] = useState(empty);
@@ -270,6 +275,27 @@ function ClientesPage() {
                 <Input
                   value={form.cep}
                   onChange={(e) => setForm({ ...form, cep: maskCEP(e.target.value) })}
+                  onBlur={async (e) => {
+                    const digits = e.target.value.replace(/\D/g, "");
+                    if (digits.length !== 8) return;
+                    try {
+                      const res = await fetch(`https://viacep.com.br/ws/${digits}/json/`);
+                      const data = await res.json();
+                      if (data.erro) {
+                        toast.error("CEP não encontrado");
+                        return;
+                      }
+                      setForm((f) => ({
+                        ...f,
+                        endereco:
+                          [data.logradouro, data.bairro].filter(Boolean).join(", ") || f.endereco,
+                        cidade: data.localidade || f.cidade,
+                        estado: data.uf || f.estado,
+                      }));
+                    } catch {
+                      toast.error("Erro ao buscar CEP");
+                    }
+                  }}
                   placeholder="00000-000"
                   inputMode="numeric"
                 />

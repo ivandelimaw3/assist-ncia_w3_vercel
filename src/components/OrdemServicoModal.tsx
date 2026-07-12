@@ -128,7 +128,9 @@ export function OrdemServicoModal({ open, onOpenChange, editing, nextNumero }: P
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {editing ? `Editar OS #${editing.numero_os}` : `Nova OS #${nextNumero}`}
+            {editing
+              ? `Editar OS #${String(editing.numero_os).padStart(4, "0")}`
+              : `Nova OS #${String(nextNumero).padStart(4, "0")}`}
           </DialogTitle>
         </DialogHeader>
 

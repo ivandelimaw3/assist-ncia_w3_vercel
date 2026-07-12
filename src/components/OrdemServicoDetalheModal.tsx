@@ -44,7 +44,7 @@ export function OrdemServicoDetalheModal({ open, onOpenChange, os }: Props) {
 
     w.document.write(`<!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"/>
-<title>OS #${os.numero_os} — ${os.cliente}</title>
+<title>OS #${String(os.numero_os).padStart(4, "0")} — ${os.cliente}</title>
 <style>
   * { box-sizing: border-box; }
   body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; color:#111; padding:32px; max-width:820px; margin:0 auto; }
@@ -66,7 +66,7 @@ export function OrdemServicoDetalheModal({ open, onOpenChange, os }: Props) {
 </head><body>
   <div class="header">
     <div>
-      <h1>Ordem de Serviço #${os.numero_os}</h1>
+      <h1>Ordem de Serviço #${String(os.numero_os).padStart(4, "0")}</h1>
       <div class="meta">Emitido em ${format(new Date(), "dd/MM/yyyy HH:mm")}</div>
     </div>
     <div class="badge">${os.status ?? "—"}</div>
@@ -112,7 +112,7 @@ export function OrdemServicoDetalheModal({ open, onOpenChange, os }: Props) {
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-0">
           <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-border bg-background/95 backdrop-blur px-6 py-4">
             <div>
-              <h2 className="text-xl font-bold">OS #{os.numero_os}</h2>
+              <h2 className="text-xl font-bold">OS #{String(os.numero_os).padStart(4, "0")}</h2>
               <p className="text-sm text-muted-foreground">{os.cliente}</p>
             </div>
             <div className="flex items-center gap-2">

@@ -1,36 +1,22 @@
-import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
+import { Link, useLocation } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   ClipboardList,
   Users,
   Package,
-  LogOut,
   Wrench,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuthContext } from "@/components/AuthProvider";
 import { cn } from "@/lib/utils";
 
 const nav = [
-  { to: "/", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { to: "/ordens-servico", label: "Ordens de Serviço", icon: ClipboardList, exact: false },
-  { to: "/clientes", label: "Clientes", icon: Users, exact: false },
-  { to: "/produtos", label: "Produtos", icon: Package, exact: false },
+  { to: "/", label: "Menu de Serviços", icon: LayoutDashboard, exact: true, activeClass: "bg-primary text-primary-foreground" },
+  { to: "/ordens-servico", label: "Ordens de Serviço", icon: ClipboardList, exact: false, activeClass: "bg-warning text-warning-foreground" },
+  { to: "/clientes", label: "Clientes", icon: Users, exact: false, activeClass: "bg-success text-success-foreground" },
+  { to: "/produtos", label: "Produtos", icon: Package, exact: false, activeClass: "bg-info text-info-foreground" },
 ] as const;
 
 export function Sidebar() {
   const location = useLocation();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const { user, signOut } = useAuthContext();
-
-  const handleSignOut = async () => {
-    await queryClient.cancelQueries();
-    queryClient.clear();
-    await signOut();
-    navigate({ to: "/login", replace: true });
-  };
 
   return (
     <aside className="hidden md:flex w-64 flex-col border-r bg-card">
@@ -39,8 +25,8 @@ export function Sidebar() {
           <Wrench className="h-5 w-5" />
         </div>
         <div>
-          <p className="text-sm font-bold leading-tight">AssistTech</p>
-          <p className="text-xs text-muted-foreground">Controle de OS</p>
+          <p className="text-sm font-bold leading-tight">Assistência Técnica</p>
+          <p className="text-xs text-muted-foreground">Controle de Serviços</p>
         </div>
       </div>
 
@@ -57,7 +43,7 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
                 active
-                  ? "bg-primary text-primary-foreground"
+                  ? item.activeClass
                   : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
               )}
             >
@@ -67,14 +53,6 @@ export function Sidebar() {
           );
         })}
       </nav>
-
-      <div className="border-t p-4">
-        <p className="text-xs text-muted-foreground truncate mb-2">{user?.email}</p>
-        <Button variant="outline" size="sm" className="w-full" onClick={handleSignOut}>
-          <LogOut className="h-4 w-4 mr-2" />
-          Sair
-        </Button>
-      </div>
     </aside>
   );
 }

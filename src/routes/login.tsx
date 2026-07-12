@@ -49,7 +49,7 @@ function LoginPage() {
           <div className="h-14 w-14 rounded-2xl bg-primary text-primary-foreground grid place-items-center mb-4">
             <Wrench className="h-7 w-7" />
           </div>
-          <h1 className="text-2xl font-bold">AssistTech</h1>
+          <h1 className="text-2xl font-bold">Smart-Tech</h1>
           <p className="text-sm text-muted-foreground mt-1">Entre com sua conta para continuar</p>
         </div>
 

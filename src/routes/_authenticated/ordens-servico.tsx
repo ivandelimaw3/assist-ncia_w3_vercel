@@ -58,6 +58,7 @@ function OrdensServicoPage() {
       const { data, error } = await supabase
         .from("ordens_servico")
         .select("*")
+        .order("data_entrada", { ascending: false })
         .order("numero_os", { ascending: false });
       if (error) throw error;
       return data ?? [];
@@ -76,7 +77,7 @@ function OrdensServicoPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const filtered = ordens.filter((o) => {
+    const filtered = ordens.filter((o) => {
     const matchesSearch =
       !search ||
       o.cliente.toLowerCase().includes(search.toLowerCase()) ||
@@ -86,7 +87,8 @@ function OrdensServicoPage() {
     return matchesSearch && matchesStatus;
   });
 
-  return (
+ const sortedFiltered = [...filtered].sort((a, b) => Number(b.numero_os) - Number(a.numero_os));
+    return (
     <div className="space-y-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -152,16 +154,16 @@ function OrdensServicoPage() {
                   Carregando...
                 </TableCell>
               </TableRow>
-            ) : filtered.length === 0 ? (
+            ) : sortedFiltered.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
                   Nenhuma OS encontrada.
                 </TableCell>
               </TableRow>
             ) : (
-              filtered.map((os) => (
+              sortedFiltered.map((os) => (
                 <TableRow key={os.id}>
-                  <TableCell className="font-medium">#{os.numero_os}</TableCell>
+                  <TableCell className="font-medium">#{String(os.numero_os).padStart(4, "0")}</TableCell>
                   <TableCell>{os.cliente}</TableCell>
                   <TableCell>{os.equipamento}</TableCell>
                   <TableCell>
@@ -210,7 +212,8 @@ function OrdensServicoPage() {
                       variant="ghost"
                       title="Excluir"
                       onClick={() => {
-                        if (confirm(`Excluir OS #${os.numero_os}?`)) deleteMutation.mutate(os.id);
+                        if (confirm(`Excluir OS #${String(os.numero_os).padStart(4, "0")}?`))
+                          deleteMutation.mutate(os.id);
                       }}
                     >
                       <Trash2 className="h-4 w-4 text-destructive" />
